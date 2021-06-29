@@ -7,6 +7,7 @@ const cors = require("cors");
 const mongoose = require('mongoose');
 const UserModel = require('./models/user');
 const ArticleModel = require('./models/article');
+const CommentModel = require('./models/comment');
 
 var schema = buildSchema(`
     type Query {
@@ -33,22 +34,35 @@ var schema = buildSchema(`
         age: Int,
         admin: Boolean,
         email: String,
+        articles: [Article]
     }
+
     type Article {
       user: User,
+      comments: [Comment]
       title: String,
       body: String,
       createdAt: String,
-      updatedAt: String
+      updatedAt: String,
+    }
+
+    type Comment {
+      user: User,
+      article: Article,
+      approved: Boolean,
+      comment: String
     }
 `);
 
 let resolver = {
-  user: async (args) => await UserModel.findById(args.id),
+  user: async (args) => { 
+    let user = await UserModel.findById(args.id).populate('articles').exec();
+    return user;
+  },
   allUser: async (args) => {
     let page = args.page || 1;
     let limit = args.limit || 10;
-    let users = await UserModel.paginate({}, {page, limit})
+    let users = await UserModel.paginate({}, { page, limit })
     return {
       users: users.docs,
       paginate: {
@@ -59,8 +73,32 @@ let resolver = {
       }
     };
   },
-  article: async (args) => await ArticleModel.findById(args.id),
-  allArticle: async () => await ArticleModel.find({})
+  article: async (args) => {
+    // first approach
+    let article = await ArticleModel.findById(args.id).populate(['user']).exec();
+    return article;
+
+    // second approach
+    /* let article = await ArticleModel.findById(args.id);
+    let user = await UserModel.findById(article.user);
+    return {
+      // you can user ... seprator instead of two lines below
+      // title: article.title,
+      // body: article.body,
+      ...article._doc,
+      user: user
+    } */
+  },
+  allArticle: async () => {
+    let articles = await ArticleModel.find().populate(['user', {
+      path: 'comments',
+      match : {
+        approved: true
+      },
+      populate: ['user']
+    }]);
+    return articles;
+  }
 };
 
 app.use('/graphql', graphqlHTTP({
@@ -68,6 +106,10 @@ app.use('/graphql', graphqlHTTP({
   rootValue: resolver,
   graphiql: true,
 }));
+
+
+
+
 
 mongoose
   .connect("mongodb://localhost/graphql", {
