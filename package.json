@@ -4,12 +4,14 @@
   "description": "",
   "main": "session_9.js",
   "scripts": {
-    "start": "nodemon session_13.js"
+    "start": "nodemon session_14.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "apollo-server": "^2.25.2",
     "apollo-server-express": "^2.25.2",
+    "bcrypt": "^5.0.1",
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "express-graphql": "^0.12.0",

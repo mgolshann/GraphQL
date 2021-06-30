@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 const mongoosePaginate = require('mongoose-paginate');
+const bcrypt = require('bcrypt');
+
 
 const userSchema = mongoose.Schema({
     name : { type : String , required : true },
@@ -11,6 +13,16 @@ const userSchema = mongoose.Schema({
 } , { timestamps : true });
 
 userSchema.plugin(mongoosePaginate);
+
+userSchema.statics.hashPassword = function(password) {
+    let salt = bcrypt.genSaltSync(15);
+    let hash = bcrypt.hashSync(password, salt);
+    return hash;
+}
+
+userSchema.methods.comparePassword = function(password) {
+    return bcrypt.compareSync(password, this.password)
+}
 
 userSchema.virtual('articles' , {
     ref : 'Article',
