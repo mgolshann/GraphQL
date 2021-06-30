@@ -34,6 +34,7 @@ var schema = buildSchema(`
         age: Int,
         admin: Boolean,
         email: String,
+        address: String
         articles: [Article]
     }
 

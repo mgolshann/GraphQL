@@ -33,10 +33,11 @@ let typeDefs = gql`
     }
 
     type User {
-        name: String,
-        age: Int,
-        admin: Boolean,
-        email: String,
+        name: String
+        age: Int
+        admin: Boolean
+        email: String
+        address: String
         articles: [Article]
     }
 
