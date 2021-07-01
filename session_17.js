@@ -22,7 +22,7 @@ let typeDefs = gql`
     }
 
     type Mutation {
-        addArticle(title: String!, body: String) : Article
+        addArticle(title: String!, body: String, photo: Upload!) : Article
         updateArticle(id: String!, title: String, body: String) : Article
         deleteArticle(id: String!) : Boolean
         registerUser(name: String!, email: String!, password: String!, age: Int!, address: String!) : Token!
@@ -96,7 +96,11 @@ let resolvers = {
         allArticle: async () => await ArticleModel.find({}),
     },
     Mutation: {
-        addArticle: async (parent, args) => {
+        addArticle: async (parent, args, { user }) => {
+
+            if (!user) throw new AuthenticationError('not authenticate as user')
+            return console.log(args);
+
             let article = await ArticleModel.create({
                 user: "5c46c0d169720e4bc0d05cc2",
                 title: args.title,
