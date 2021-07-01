@@ -4,7 +4,7 @@
   "description": "",
   "main": "session_9.js",
   "scripts": {
-    "start": "nodemon session_17.js"
+    "start": "nodemon session_18.js"
   },
   "author": "",
   "license": "ISC",
@@ -17,6 +17,7 @@
     "express-graphql": "^0.12.0",
     "graphql": "^15.5.1",
     "jsonwebtoken": "^8.5.1",
+    "mkdirp": "^1.0.4",
     "mongoose": "^5.13.0",
     "mongoose-paginate": "^5.0.3",
     "morgan": "^1.10.0"
